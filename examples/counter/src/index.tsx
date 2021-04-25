@@ -8,10 +8,10 @@ const delay = (time) => new Promise((resolve) => setTimeout(() => resolve(), tim
 
 // 1️⃣ Use a model to define your store
 const counter = {
-  state: 0,
+  state: { num: 0 },
   reducers: {
-    increment: (prevState) => prevState + 1,
-    decrement: (prevState) => prevState - 1,
+    decrement: (prevState) => ({ num: prevState.num - 1 }),
+    increment: (prevState) => ({ num: prevState.num + 1 }),
   },
   effects: () => ({
     async asyncDecrement() {
@@ -29,15 +29,14 @@ const models = {
 const store = createStore(models);
 
 // 3️⃣ Consume model
-const { useModel } = store;
 function Counter() {
-  const [count, dispatchers] = useModel('counter');
-  const { increment, asyncDecrement } = dispatchers;
+  const count = store.useModelState('counter');
+  // const { increment, asyncDecrement } = dispatchers;
   return (
     <div>
-      <span>{count}</span>
-      <button type="button" onClick={increment}>+</button>
-      <button type="button" onClick={asyncDecrement}>-</button>
+      <span>{count.num}</span>
+      {/* <button type="button" onClick={increment}>+</button>
+      <button type="button" onClick={asyncDecrement}>-</button> */}
     </div>
   );
 }
@@ -46,7 +45,7 @@ function Counter() {
 const { Provider } = store;
 function App() {
   return (
-    <Provider>
+    <Provider initialStates={{counter: { num: 11111 }}}>
       <Counter />
     </Provider>
   );
